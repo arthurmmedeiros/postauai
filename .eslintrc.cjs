@@ -29,6 +29,10 @@ const config = {
       },
     ],
     "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+    'jsx-quotes': [
+      'warn',
+      'prefer-single'
+    ]
   },
 };
 
