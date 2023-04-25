@@ -5,12 +5,25 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { type RouterOutputs, api } from "~/utils/api";
 import Image from 'next/image';
-import { LoadingPage, LoadingSpinner } from "~/components/Loading";
+import { LoadingPage } from "~/components/Loading";
+import { useState } from "react";
 
 dayjs.extend(relativeTime);
 
 const CreatePostWizard = () => {
+  const [content, setContent] = useState<string>('');
   const { user }= useUser();
+
+  const ctx = api.useContext();
+
+  const { 
+    mutate, 
+    isLoading: isPosting, } = api.posts.create.useMutation({
+      onSuccess: () => {
+        setContent('');
+        void ctx.posts.getAll.invalidate();
+      }
+    });
 
   if (!user) {
     return null;
@@ -27,7 +40,20 @@ const CreatePostWizard = () => {
         <input
           placeholder='Type something'
           className='bg-transparent grow outline-none'
+          value={content}
+          onChange={e => [
+            setContent(e.target.value)
+          ]}
+          disabled={isPosting}
         />
+        <div className='flex items-center'>
+          <button 
+            onClick={() => {mutate({content})}}
+            className='px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'>
+            Post
+          </button>
+        </div>
+
     </div>
   )
 }
