@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { LoadingPage } from "~/components/Loading";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 dayjs.extend(relativeTime);
 
@@ -83,10 +84,14 @@ const PostView = (props: PostWithUser) => {
         height={56}/>
       <div>
         <div>
-          <strong>
-            {`@${props.author?.username}`}
-          </strong>
-          <span className='font-thin'>{` · ${displayDate}`}</span> 
+          <Link href={`/@${props.author?.username}`}>
+            <strong>
+              {`@${props.author?.username}`}
+            </strong>
+          </Link>
+          <Link href={`/post/${props.post.id}`}>
+            <span className='font-thin'>{` · ${displayDate}`}</span>
+          </Link> 
         </div>
         <div>
           {props.post.content}
