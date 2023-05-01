@@ -7,6 +7,7 @@ import { type RouterOutputs, api } from "~/utils/api";
 import Image from 'next/image';
 import { LoadingPage } from "~/components/Loading";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 dayjs.extend(relativeTime);
 
@@ -22,6 +23,14 @@ const CreatePostWizard = () => {
       onSuccess: () => {
         setContent('');
         void ctx.posts.getAll.invalidate();
+      },
+      onError: (e) => {
+        const errorMessage = e.data?.zodError?.fieldErrors.content;
+        if (errorMessage && errorMessage[0]) {
+          toast.error(errorMessage[0])
+        } else {
+          toast.error('Failed to post. Please try again later.')
+        }        
       }
     });
 
@@ -48,6 +57,7 @@ const CreatePostWizard = () => {
         />
         <div className='flex items-center'>
           <button 
+            disabled={isPosting}
             onClick={() => {mutate({content})}}
             className='px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'>
             Post
