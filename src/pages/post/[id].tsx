@@ -20,7 +20,7 @@ const SinglePostPage: NextPage<{id: string}> = ({id}) => {
   return (
     <>
         <Head>
-            <title>Post</title>
+            <title>Posta</title>
         </Head>
         <PageLayout>
           <div>Single post page</div>    
