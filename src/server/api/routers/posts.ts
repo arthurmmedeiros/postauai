@@ -50,6 +50,23 @@ const ratelimit = new Ratelimit({
 
 
 export const postsRouter = createTRPCRouter({
+  getById: publicProcedure
+    .input(
+      zod.object({
+        id: zod.string()
+      })
+    )
+    .query(async ({ ctx, input}) => {
+      const postResult = await ctx.prisma.post.findUnique({
+        where: { id : input.id}
+      });
+
+      if (!postResult) {
+        throw new TRPCError({ code : "NOT_FOUND"});
+      }
+      
+      return (await addUserDataToPosts([postResult]))[0];
+    }),
   getAll: publicProcedure.query(async ({ ctx }) => {
     const posts = await ctx.prisma.post.findMany({
       take: 100,

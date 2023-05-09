@@ -2,6 +2,9 @@ import { type GetStaticProps, type NextPage } from "next";
 import Head from "next/head";
 import { LoadingPage } from "~/components/Loading";
 import { api } from "~/utils/api";
+import PageLayout from "~/components/Layout";
+import PostView from "~/components/PostView";
+import { generateSsgHelper } from "~/server/helpers/ssgHelper";
 
 const ProfileFeed = (props: { userId: string}) => {
     const {data, isLoading} = api.posts.getPostsByUserId.useQuery({
@@ -51,19 +54,8 @@ const ProfilePage: NextPage<PageProps> = (props) => {
     );
 };
 
-import { createServerSideHelpers } from '@trpc/react-query/server';
-import { appRouter } from "~/server/api/root";
-import { prisma } from "~/server/db";
-import superjson from 'superjson';
-import PageLayout from "~/components/Layout";
-import PostView from "~/components/PostView";
-
 export const getStaticProps: GetStaticProps = async (context) => {
-    const helpers = createServerSideHelpers({
-        router: appRouter,
-        ctx: { prisma, userId: null},
-        transformer: superjson, // optional - adds superjson serialization
-      });
+    const helpers = generateSsgHelper();
 
     const slug = context.params?.slug;
 
